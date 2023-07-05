@@ -30,3 +30,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register("bootRunLocal") {
+	group = "application"
+	doFirst {
+		tasks.bootRun.configure {
+			systemProperty("spring.profiles.active", "local")
+		}
+	}
+	finalizedBy("bootRun")
+}
