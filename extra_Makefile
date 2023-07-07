@@ -1,0 +1,51 @@
+dev:
+	docker-compose up
+
+dev-down:
+	docker-compose down
+
+local-run:
+	./gradlew --no-daemon bootRun --args='--spring.profiles.active=local'
+
+# Documentation Related
+.PHONY: docs
+docs:
+	docker run -it --rm -v "$$PWD/docs":/usr/src/app -p "4000:4000" starefossen/github-pages
+
+build-plantuml:
+	docker build --tag $(PLANTUML_IMAGE_TAG) docs/assets/plantuml/.
+
+diagrams: build-plantuml
+	docker run --rm -v ${PWD}/docs/assets:/work $(PLANTUML_IMAGE_TAG) -checkmetadata -tpng -r "/work/**.puml"
+
+mdl:
+	docker run --rm -v "$$PWD/docs":/workspace -v "$$PWD/docs/.mdlrc:/mdl/.mdlrc" wpengine/mdl /workspace
+
+# Terraform Related
+fmt:
+	docker run --rm -v ${PWD}/src/main/terraform:/data hashicorp/terraform:${terraform_version} fmt -recursive -diff /data
+
+check-terraform-version:
+	if [[ "$$(terraform -v | head -n 1)" != "Terraform v${terraform_version}" ]];\
+	then echo "Terraform v${terraform_version} required. Maybe run:\ntfenv use ${terraform_version}";\
+	exit 1;\
+	fi
+
+login-testing:
+	sb sso 021097648249 PowerUser
+
+login-testing-admin:
+	sb sso 021097648249 Administrator
+
+plan-testing: check-terraform-version login-testing
+	cd src/main/terraform/stage/testing; \
+		$$(sb sso 021097648249 PowerUser); \
+		terraform init -input=false --backend-config=default-backend.tfvars; \
+		terraform plan -lock=false -var-file=default.tfvars -out=.terraform.plan; \
+		terraform show -json .terraform.plan > .terraform.plan.json
+
+apply-testing: check-terraform-version login-testing-admin
+	cd src/main/terraform/stage/testing; \
+		$$(sb sso 021097648249 Administrator); \
+		terraform init -input=false --backend-config=default-backend.tfvars; \
+		terraform apply -lock=false -var-file=default.tfvars $(tfargs)
