@@ -50,6 +50,15 @@ public class PhoneBookService {
     }
 
     @Transactional
+    public ContactDto updateContact(String contactId, ContactDto request) {
+        var contact = contactRepository.findByUid(contactId).orElseThrow();
+        contact.setFirstName(request.firstName());
+        contact.setLastName(request.lastName());
+        contactRepository.save(contact);
+        return map(contact);
+    }
+
+    @Transactional
     public List<ContactDto> getContacts(String userId) {
         return contactRepository.findByUserId(userId).stream()
                 .map(this::map)
