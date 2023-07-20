@@ -8,6 +8,13 @@ import static java.util.Collections.unmodifiableList;
 public class InMemoryPhoneBook {
     private final List<PhoneBookRecord> records = new ArrayList<>();
 
+    public InMemoryPhoneBook() {
+    }
+
+    public InMemoryPhoneBook(List<PhoneBookRecord> records) {
+        this.records.addAll(records);
+    }
+
     public void add(PhoneBookRecord record) {
         records.add(record);
     }
