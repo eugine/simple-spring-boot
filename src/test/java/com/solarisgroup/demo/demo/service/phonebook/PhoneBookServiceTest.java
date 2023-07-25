@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,17 +36,28 @@ class PhoneBookServiceTest {
 
     @Test
     void shouldCreateContact() {
-        when(contactRepository.save(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(emailRepository.saveAll(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(phoneNumberRepository.saveAll(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(contactRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(emailRepository.saveAll(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(phoneNumberRepository.saveAll(Mockito.any()))
+//                .thenReturn(List.of());
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         var request = new ContactDto(null, "John", "Doe", List.of("email@example.com"), List.of("123456789", "987654321"));
+
         var contact = target.createContact("any", request);
 
         assertEquals("John", contact.firstName());
         assertEquals("Doe", contact.lastName());
         assertEquals(1, contact.emails().size());
         assertEquals(2, contact.phoneNumbers().size());
+
+        Mockito.verify(contactRepository, times(1)).save(Mockito.any());
+        Mockito.verify(emailRepository).saveAll(Mockito.any());
+        Mockito.verify(phoneNumberRepository).saveAll(Mockito.any());
+
+//        Mockito.verify(contactRepository).findByUid(Mockito.anyString());
     }
 
 

@@ -7,23 +7,27 @@ import com.solarisgroup.demo.demo.repository.ContactRepository;
 import com.solarisgroup.demo.demo.repository.EmailRepository;
 import com.solarisgroup.demo.demo.repository.PhoneNumberRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class PhoneBookService {
 
     private final ContactRepository contactRepository;
     private final EmailRepository emailRepository;
     private final PhoneNumberRepository phoneNumberRepository;
 
+    public PhoneBookService(ContactRepository contactRepository, EmailRepository emailRepository, PhoneNumberRepository phoneNumberRepository) {
+        this.contactRepository = contactRepository;
+        this.emailRepository = emailRepository;
+        this.phoneNumberRepository = phoneNumberRepository;
+    }
+
     @Transactional
     public ContactDto createContact(String userId, ContactDto request) {
-        var contact = contactRepository.save(Contact.builder()
+        Contact contact = contactRepository.save(Contact.builder()
                 .uid(UUID.randomUUID().toString())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
