@@ -23,12 +23,26 @@ class StudentUtilsTest {
 
     @Test
     void shouldFindBestStudent() {
-        //TBD
+        var students = List.of(
+                new StudentData("Ben", Map.of("Math", 100, "English", 90, "History", 80)),
+                new StudentData("Alice", Map.of("Math", 80, "English", 100, "History", 60))
+        );
+
+        var result = StudentUtils.findBestStudent(students);
+
+        assertEquals("Ben", result);
     }
 
     @Test
     void shouldFindSubjectWithBestAverageGrade() {
-        //TBD
+        var students = List.of(
+                new StudentData("Ben", Map.of("Math", 100, "English", 90, "History", 80)),
+                new StudentData("Alice", Map.of("Math", 80, "English", 100, "History", 60))
+        );
+
+        var result = StudentUtils.findSubjectWithBestAverageGrade(students);
+
+        assertEquals("English", result);
     }
 
 }

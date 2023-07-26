@@ -13,7 +13,15 @@ public class StudentUtils {
      * @return map of student name and average grade
      */
     public static Map<String, Integer> averageGradeByStudent(List<StudentData> students) {
-        return null;
+        Map<String, Integer> result = new HashMap<>();
+        for (StudentData student : students) {
+            int sum = 0;
+            for (Integer grade : student.grades().values()) {
+                sum += grade;
+            }
+            result.put(student.name(), sum / student.grades().size());
+        }
+        return result;
     }
 
     /**
@@ -22,7 +30,16 @@ public class StudentUtils {
      * @return best student name
      */
     public static String findBestStudent(List<StudentData> students) {
-        return null;
+        var averageGradeByStudent = averageGradeByStudent(students);
+        int maxGrade = 0;
+        String bestStudent = null;
+        for (Map.Entry<String, Integer> entry : averageGradeByStudent.entrySet()) {
+            if (entry.getValue() > maxGrade) {
+                maxGrade = entry.getValue();
+                bestStudent = entry.getKey();
+            }
+        }
+        return bestStudent;
     }
 
     /**
@@ -37,7 +54,54 @@ public class StudentUtils {
         //2. find the average grade for each subject (Map<String, Integer>)
         //3. find the subject with the best average grade
 
-        return null;
+        Map<String, List<Integer>> subjectGrades = new HashMap<>();
+
+        for (var student : students) {
+            for (Map.Entry<String, Integer> entry : student.grades().entrySet()) {
+                String subject = entry.getKey();
+                Integer grade = entry.getValue();
+
+                if (subjectGrades.containsKey(subject)) {
+                    subjectGrades.get(subject).add(grade);
+                } else {
+                    var grades = new ArrayList<Integer>();
+                    grades.add(grade);
+                    subjectGrades.put(subject, grades);
+                }
+            }
+        }
+
+        Map<String, Integer> subjectAverageGrades = new HashMap<>();
+
+        for (Map.Entry<String, List<Integer>> entry : subjectGrades.entrySet()) {
+            String subject = entry.getKey();
+            List<Integer> grades = entry.getValue();
+
+            int sum = 0;
+            for (Integer grade : grades) {
+                sum += grade;
+            }
+
+            int average = sum / grades.size();
+
+            subjectAverageGrades.put(subject, average);
+        }
+
+        String bestSubject = null;
+        int bestAverage = 0;
+
+        for (Map.Entry<String, Integer> entry : subjectAverageGrades.entrySet()) {
+            String subject = entry.getKey();
+            Integer average = entry.getValue();
+
+            if (average > bestAverage) {
+                bestSubject = subject;
+                bestAverage = average;
+            }
+        }
+
+
+        return bestSubject;
     }
 
 }
