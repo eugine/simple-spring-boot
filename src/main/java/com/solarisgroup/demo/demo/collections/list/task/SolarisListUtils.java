@@ -1,6 +1,8 @@
 package com.solarisgroup.demo.demo.collections.list.task;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SolarisListUtils {
     /**
@@ -10,7 +12,13 @@ public class SolarisListUtils {
      * @return number of occurrences
      */
     public static int countOccurrence(List<String> items, String value) {
-        return 0;
+       int count = 0;
+        for (String item : items) {
+            if (Objects.equals(item, value)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -19,7 +27,13 @@ public class SolarisListUtils {
      * @return list of unique items
      */
     public static List<String> findUnique(List<String> items) {
-        return null;
+        var result = new ArrayList<String>();
+        for (var item : items) {
+            if (!result.contains(item)) {
+                result.add(item);
+            }
+        }
+        return result;
     }
 
     /**
@@ -28,7 +42,11 @@ public class SolarisListUtils {
      * @return list of item occurrences
      */
     public static List<ItemOccurrence> findOccurrence(List<String> items) {
-        return null;
+        var result = new ArrayList<ItemOccurrence>();
+        for (String item : findUnique(items)) {
+            result.add(new ItemOccurrence(item, countOccurrence(items, item)));
+        }
+        return result;
     }
 }
 

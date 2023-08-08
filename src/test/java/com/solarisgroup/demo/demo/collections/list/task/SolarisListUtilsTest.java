@@ -17,11 +17,34 @@ class SolarisListUtilsTest {
 
     @Test
     void shouldFindUnique() {
-        //TBD
+        var list = List.of("a", "b", "c", "a", "b", "c", "a", "b", "c", "d");
+
+        var result = SolarisListUtils.findUnique(list);
+        assertEquals(4, result.size());
     }
 
     @Test
     void shouldFindOccurrence() {
-        //TBD
+        var list = List.of("a", "b", "c", "a", "b", "c", "a", "b", "c", "d");
+
+        var result = SolarisListUtils.findOccurrence(list);
+        assertEquals(4, result.size());
+
+        assertEquals(3, findOccurrence(result, "a").occurrence());
+        assertEquals(3, findOccurrence(result, "b").occurrence());
+        assertEquals(3, findOccurrence(result, "c").occurrence());
+        assertEquals(1, findOccurrence(result, "d").occurrence());
     }
+
+    private ItemOccurrence findOccurrence(List<ItemOccurrence> items, String name) {
+        ItemOccurrence result = null;
+        for (ItemOccurrence item : items) {
+            if (item.item().equals(name)) {
+                result = item;
+                break;
+            }
+        }
+        return result;
+    }
+
 }
