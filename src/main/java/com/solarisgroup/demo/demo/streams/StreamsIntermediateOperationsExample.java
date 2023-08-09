@@ -2,8 +2,11 @@ package com.solarisgroup.demo.demo.streams;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.IntSupplier;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -11,22 +14,22 @@ import java.util.stream.Stream;
 
 public class StreamsIntermediateOperationsExample {
 
-    public static final List<String> NAMES = Arrays.asList("John", "Jane", "Adam", "Eve");
+    public static final List<String> NAMES = List.of("John", "Jane", "Adam", "Eve");
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        streamCreation();
+//        streamCreation();
 //        numericStreams();
 //        streamLaziness();
 //        streamFiltering();
 //        streamSorting();
 //        infiniteStream();
 //        streamMapping();
-//        streamFlatMap();
+        streamFlatMap();
     }
 
     private static void infiniteStream() {
-        IntStream.generate(random::nextInt)
+        IntStream.generate(() -> random.nextInt())
                 .skip(10)
                 .limit(5)
                 .forEach(value -> System.out.println(value));
@@ -37,18 +40,20 @@ public class StreamsIntermediateOperationsExample {
         Stream<Integer> integerStream = Stream.of(1, 2, 3, 4, 5);
 
         Stream<?> emptyStream = Stream.empty();
-        Stream<String> namesStream = NAMES.stream();
+        List<String> names = List.of("John", "Jane", "Adam", "Eve");
+        Stream<String> namesStream = names.stream();
     }
 
     private static void streamLaziness() {
         var counter = new SimpleCounter();
-        NAMES.stream()
+        var result = NAMES.stream()
                 .filter(element -> {
                     counter.increment();
-                    return element.startsWith("J");
-                });
-//                .count();
-        System.out.println(counter.getValue());
+                    return false;
+                })
+                .count();
+        System.out.println("Counter: " + counter.getValue());
+        System.out.println("Result: " + result);
     }
 
     private static void numericStreams() {
@@ -69,13 +74,13 @@ public class StreamsIntermediateOperationsExample {
         System.out.println(NAMES);
         List<String> filteredNames = NAMES.stream()
                 .filter(name -> name.startsWith("J") || name.startsWith("E"))
-                .filter(name -> name.length() == 3)
+//                .filter(name -> name.length() == 3)
                 .toList();
         System.out.println(filteredNames);
 
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
         List<Integer> oddNumbers = numbers.stream()
-                .filter(n -> n % 2 == 1)
+                .filter(value -> value % 2 == 1)
                 .toList();
         System.out.println("odd numbers:" + oddNumbers);
 
@@ -88,6 +93,7 @@ public class StreamsIntermediateOperationsExample {
     }
 
     private static void streamSorting() {
+        System.out.println(NAMES);
         List<String> sortedNames = NAMES.stream()
                 .sorted()
                 .filter(name -> name.length() == 4)
@@ -98,17 +104,25 @@ public class StreamsIntermediateOperationsExample {
 
     private static void streamMapping() {
         var lengths = NAMES.stream()
-                .map(s -> s.length())
+                .map(String::length)
                 .toList();
         System.out.println(lengths);
     }
 
     private static void streamFlatMap() {
-        List<List<String>> namesOfNames = List.of(NAMES, List.of("Test1", "Test2"));
+        List<List<String>> namesOfNames = List.of(
+                List.of("John", "Jane", "Adam", "Eve"),
+                List.of("Test1", "Test2")
+        );
 
-        namesOfNames.stream()
-                .flatMap(list -> list.stream())
-                .forEach(name -> System.out.println(name));
         System.out.println(namesOfNames);
+
+        Map<String, String> result = namesOfNames.stream()
+                .flatMap(list -> list.stream())
+//                .collect(Collectors.joining(", "));
+//                .toList();
+//                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(item -> item, item -> item.toLowerCase()));
+        System.out.println("Result: " + result);
     }
 }

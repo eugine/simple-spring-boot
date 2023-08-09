@@ -17,6 +17,7 @@ public class LambdaExpressionExample {
             @Override
             public void run() {
                 log("Anonymous runnable");
+                //second line of code
             }
         };
 

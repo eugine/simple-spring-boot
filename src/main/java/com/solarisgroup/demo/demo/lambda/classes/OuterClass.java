@@ -31,11 +31,11 @@ public class OuterClass {
 
     public static void main(String[] args) {
         var outer = new OuterClass("outer");
-//        var inner = new InnerClass("inner");
-//        var staticNested = new StaticNestedClass("static");
+        var inner = outer.new InnerClass("inner");
+        var staticNested = new StaticNestedClass("static");
 
         System.out.println(outer);
-//        System.out.println(inner);
-//        System.out.println(staticNested);
+        System.out.println(inner);
+        System.out.println(staticNested);
     }
 }
